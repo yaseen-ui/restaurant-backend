@@ -13,26 +13,8 @@ let clients = [];
 
 const wss = new WebSocket.Server({ noServer: true });
 
-const orderFields = {
-  availableDoughChefs: 2,
-  availableToppingChefs: 3,
-  availableWaiters: 2,
-  availableOven: 1,
-
-  busyDoughChefs: 0,
-  busyToppingChefs: 0,
-  busyOven: 0,
-  busyWaiters: 0,
-
-  doughChefQueue: [],
-  toppingChefQueue: [],
-  ovenQueue: [],
-  waiterQueue: [],
-};
-
 wss.on("connection", (ws) => {
   clients.push(ws);
-  broadcast(orderFields, "orderFields");
   ws.on("close", () => {
     clients = clients.filter((client) => client !== ws);
   });
@@ -57,7 +39,7 @@ app.post("/api/orders", (req, res) => {
     timeTaken: null,
   };
   orders.push(newOrder);
-  processOrder(newOrder, broadcast, orderFields);
+  processOrder(newOrder, broadcast);
   res.status(201).json({ message: "Order received", order: newOrder });
 });
 
